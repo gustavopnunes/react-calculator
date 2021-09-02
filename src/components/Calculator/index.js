@@ -38,6 +38,7 @@ export const Calculator = () => {
     setScreenValues(screenValues.slice(0, -1));
   };
 
+  /* eslint no-eval: 0 */
   const calculate = () => {
     setScreenValues(String(eval(screenValues)));
   };
