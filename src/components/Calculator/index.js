@@ -1,135 +1,231 @@
 import { useState } from "react";
+import { Button } from "./Button";
 import { CalculatorStyled, NumPadStyled, ScreenStyled } from "./style";
+const stringMath = require("string-math");
 
 export const Calculator = () => {
-  const [screenValues, setScreenValues] = useState("");
+  const operators = ["+", "-", "*", "/"];
+  const [inputValues, setInputValues] = useState("0");
+  const [firstInputTaken, setFirstInputTaken] = useState(false);
+  // const [hasDot, setHasDot] = useState(false);
+  //todo: tratar entrada de mais de um ponto
+  const [expression, setExpression] = useState("");
 
-  const handleClick = (e) => {
-    setScreenValues(screenValues.concat(e.target.name));
-  };
-
-  const handleKeyDown = (keyPressed) => {
-    // console.log(keyPressed.key);
-    const validator = /^(\d+|\*\*|[+\-*/])$/;
-    if (keyPressed.key.match(validator)) {
-      setScreenValues(screenValues.concat(keyPressed.key));
-    } else {
-      keyPressed.key === "Delete" && backspace();
-      keyPressed.key === "Backspace" && backspace();
-      keyPressed.key === "Enter" && calculate();
-      keyPressed.key === "Escape" && clearScreen();
-      return;
-    }
-
-    try {
-      console.log("sei la que que ta rolando auqi");
-    } catch {
-      console.log("deu ruim");
+  const handleFirstInput = (keyPressed) => {
+    const key = keyPressed.target.name || keyPressed.key;
+    if (!isNaN(key) || key === "-") {
+      setInputValues(key);
+      setFirstInputTaken(true);
     }
   };
 
-  //todo: tratar inputs invalidos
+  const handleInput = (keyPressed) => {
+    const key = keyPressed.target.name || keyPressed.key;
+    if (key === "Backspace") return backspace();
+    if (key === "Delete") return backspace();
+    if (key === "Escape") return clearInputs();
+    if (key === "Enter") return calculate();
 
-  const clearScreen = () => {
-    setScreenValues("");
+    if (inputValues.length < 12) {
+      setInputValues(inputValues);
+      const lastDigit = inputValues[inputValues.length - 1];
+      if (!operators.includes(lastDigit) || !isNaN(key)) {
+        setInputValues(inputValues.concat(key));
+      } else {
+        if (operators.includes(key)) {
+          setInputValues(String(inputValues.slice(0, -1).concat(key)));
+        } else {
+          setInputValues(inputValues.concat(key));
+        }
+        return;
+      }
+      setInputValues(inputValues.concat(key));
+    }
   };
 
   const backspace = () => {
-    setScreenValues(screenValues.slice(0, -1));
+    if (inputValues.length === 1 && inputValues[0] === "0") {
+      return;
+    }
+
+    if (inputValues.length === 1) {
+      setInputValues("0");
+      setFirstInputTaken(false);
+      setExpression("");
+      return;
+    }
+
+    setInputValues(inputValues.slice(0, -1));
+    const lastDigit = inputValues[inputValues.length - 1];
+    if (operators.includes(lastDigit)) {
+    }
   };
 
-  /* eslint no-eval: 0 */
+  const clearInputs = () => {
+    setInputValues("0");
+    setFirstInputTaken(false);
+    setExpression("");
+  };
+
   const calculate = () => {
-    setScreenValues(String(eval(screenValues)));
+    let expression = "";
+    const lastDigit = inputValues[inputValues.length - 1];
+    let result = "";
+
+    if (operators.includes(lastDigit)) {
+      return;
+    } else {
+      expression = inputValues;
+      result = stringMath(expression);
+      setExpression(expression);
+      setInputValues(result.toString());
+    }
   };
 
   return (
     <>
-      <h1>Simple React Calculator</h1>
-      <CalculatorStyled onKeyDown={handleKeyDown}>
+      <h1>React Calculator</h1>
+      <CalculatorStyled
+        onKeyDown={firstInputTaken ? handleInput : handleFirstInput}
+      >
         <ScreenStyled>
-          <input value={screenValues} maxLength="12" readOnly></input>
+          <input value={expression} readOnly className="input_queue"></input>
+          <input value={inputValues} readOnly></input>
         </ScreenStyled>
         <NumPadStyled>
-          <button
+          <Button
+            text="Clear"
             className="button_clear highlight"
-            onClick={clearScreen}
-            onKeyPress={handleKeyDown}
-          >
-            Clear
-          </button>
-          <button className="button_operator highlight" onClick={backspace}>
-            C
-          </button>
-          <button
+            onClick={clearInputs}
+            onKeyPress={""}
+          ></Button>
+          <Button
+            text={<span>&#8701;</span>}
+            className="button_operator highlight button_backspace"
+            onClick={backspace}
+          ></Button>
+          <Button
+            text={"\u00F7"}
             name="/"
             className="button_operator highlight"
-            onClick={handleClick}
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
           >
-            /
-          </button>
-          <button name="7" className="button_number" onClick={handleClick}>
-            7
-          </button>
-          <button name="8" className="button_number" onClick={handleClick}>
-            8
-          </button>
-          <button name="9" className="button_number" onClick={handleClick}>
+            ÷
+          </Button>
+          <Button
+            text="7"
+            name="7"
+            className="button_number"
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          ></Button>
+          <Button
+            name="8"
+            text="8"
+            className="button_number"
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          ></Button>
+          <Button
+            name="9"
+            text="9"
+            className="button_number"
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          >
             9
-          </button>
-          <button
+          </Button>
+          <Button
             name="*"
+            text="X"
             className="button_operator highlight"
-            onClick={handleClick}
-          >
-            X
-          </button>
-          <button name="4" className="button_number" onClick={handleClick}>
-            4
-          </button>
-          <button name="5" className="button_number" onClick={handleClick}>
-            5
-          </button>
-          <button name="6" className="button_number" onClick={handleClick}>
-            6
-          </button>
-          <button
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          ></Button>
+          <Button
+            name="4"
+            text="4"
+            className="button_number"
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          ></Button>
+          <Button
+            name="5"
+            text="5"
+            className="button_number"
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          ></Button>
+          <Button
+            name="6"
+            text="6"
+            className="button_number"
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          ></Button>
+          <Button
             name="-"
+            text={"\u2212"}
             className="button_operator highlight"
-            onClick={handleClick}
-          >
-            -
-          </button>
-          <button name="1" className="button_number" onClick={handleClick}>
-            1
-          </button>
-          <button name="2" className="button_number" onClick={handleClick}>
-            2
-          </button>
-          <button name="3" className="button_number" onClick={handleClick}>
-            3
-          </button>
-          <button
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          ></Button>
+          <Button
+            name="1"
+            text="1"
+            className="button_number"
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          ></Button>
+          <Button
+            name="2"
+            text="2"
+            className="button_number"
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          ></Button>
+          <Button
+            name="3"
+            text="3"
+            className="button_number"
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          ></Button>
+          <Button
             name="+"
+            text="+"
             className="button_operator highlight"
-            onClick={handleClick}
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
           >
             +
-          </button>
-          <button name="0" className="button_number" onClick={handleClick}>
+          </Button>
+          <Button
+            name="8"
+            text="8"
+            className="button_number"
+            onClick={firstInputTaken ? handleInput : handleFirstInput}
+          >
             0
-          </button>
-          <button name="." className="button_number" onClick={handleClick}>
+          </Button>
+          <Button
+            name="."
+            text="."
+            className="button_number"
+            onClick={handleInput}
+          >
             .
-          </button>
-          <button className="button_equal highlight" onClick={calculate}>
+          </Button>
+          <Button
+            text="="
+            className="button_equal highlight"
+            onClick={calculate}
+          >
             =
-          </button>
+          </Button>
         </NumPadStyled>
-        <p>by Gustavo</p>
+        <p>made by Greg</p>
       </CalculatorStyled>
       <div className="instructions">
-        insert numbers by clicking on them, or use your keyboard
+        <p>insert numbers by clicking on them, or use your keyboard</p>
+        <br />
+        <p>
+          <span>Esc: </span> clean display
+        </p>
+        <p>
+          <span>Del / backspace:</span> delete last symbol
+        </p>
+        <p>
+          <span>Enter:</span> calculate
+        </p>
       </div>
     </>
   );

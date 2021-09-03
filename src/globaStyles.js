@@ -5,16 +5,18 @@ const GlobalStyle = createGlobalStyle`
         height: 100vh;
         display: flex;
         flex-direction: column;
-        margin-top: 32px;
+        margin-top: 16px;
         align-items: center;
         background-color: blanchedalmond;
         overflow: hidden;
-        font-family: monospace;
         text-align: center;
     }
 
     h1 {
+        margin: 4px 0 8px 0;
+        font-size: 30px;
         text-transform: uppercase;
+        font-family: monospace;
     }
 
     p {
@@ -25,10 +27,14 @@ const GlobalStyle = createGlobalStyle`
 
     .instructions {
         width: 240px;
-        margin: 0 auto;
+        margin: 4px auto;
         font-family: monospace;
         margin-top: 8px;
         text-align: center;
+
+        span {
+            font-weight: bold;
+        }
     }
 `;
 
