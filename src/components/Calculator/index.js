@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Container from "../Container";
-import { CalculatorStyled } from "./style";
+import CalculatorStyled from "./style";
 import Display from "./Display";
 import Numpad from "./Numpad";
 const stringMath = require("string-math");
@@ -25,7 +25,8 @@ const Calculator = () => {
   };
 
   const handleInput = (keyPressed) => {
-    let key;
+    let key = "";
+
     keyPressed.detail === 1
       ? (key = keyPressed.target.name)
       : (key = keyPressed.key);

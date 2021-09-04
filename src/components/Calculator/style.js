@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const CalculatorStyled = styled.div`
+const CalculatorStyled = styled.div`
   margin: 0 auto;
   width: 288px;
   height: 408px;
@@ -14,3 +14,5 @@ export const CalculatorStyled = styled.div`
     color: snow;
   }
 `;
+
+export default CalculatorStyled;
