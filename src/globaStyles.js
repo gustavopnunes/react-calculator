@@ -24,18 +24,6 @@ const GlobalStyle = createGlobalStyle`
         font-family: monospace;
         font-size: 0.7rem;
     }
-
-    .instructions {
-        width: 240px;
-        margin: 4px auto;
-        font-family: monospace;
-        margin-top: 8px;
-        text-align: center;
-
-        span {
-            font-weight: bold;
-        }
-    }
 `;
 
 export default GlobalStyle;

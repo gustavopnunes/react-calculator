@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { Button } from "./Button";
-import { CalculatorStyled, NumPadStyled, ScreenStyled } from "./style";
+import Container from "../Container";
+import { CalculatorStyled } from "./style";
+import Display from "./Display";
+import Numpad from "./Numpad";
 const stringMath = require("string-math");
 
-export const Calculator = () => {
-  const operators = ["+", "-", "*", "/"];
+const Calculator = () => {
+  const operators = ["+", "-", "*", "/", "."];
   const [inputValues, setInputValues] = useState("0");
   const [firstInputTaken, setFirstInputTaken] = useState(false);
-  // const [hasDot, setHasDot] = useState(false);
-  //todo: tratar entrada de mais de um ponto
   const [expression, setExpression] = useState("");
 
   const handleFirstInput = (keyPressed) => {
@@ -17,29 +17,40 @@ export const Calculator = () => {
       setInputValues(key);
       setFirstInputTaken(true);
     }
+
+    if (key === ".") {
+      setInputValues(inputValues.concat(key));
+      setFirstInputTaken(true);
+    }
   };
 
   const handleInput = (keyPressed) => {
-    const key = keyPressed.target.name || keyPressed.key;
+    let key;
+    keyPressed.detail === 1
+      ? (key = keyPressed.target.name)
+      : (key = keyPressed.key);
+
     if (key === "Backspace") return backspace();
     if (key === "Delete") return backspace();
     if (key === "Escape") return clearInputs();
     if (key === "Enter") return calculate();
 
-    if (inputValues.length < 12) {
-      setInputValues(inputValues);
-      const lastDigit = inputValues[inputValues.length - 1];
-      if (!operators.includes(lastDigit) || !isNaN(key)) {
-        setInputValues(inputValues.concat(key));
-      } else {
-        if (operators.includes(key)) {
-          setInputValues(String(inputValues.slice(0, -1).concat(key)));
-        } else {
+    if (!isNaN(key) || operators.includes(key)) {
+      if (inputValues.length < 12) {
+        setInputValues(inputValues);
+        const lastDigit = inputValues[inputValues.length - 1];
+        if (!operators.includes(lastDigit) || !isNaN(key)) {
           setInputValues(inputValues.concat(key));
+        } else {
+          if (operators.includes(key)) {
+            setInputValues(String(inputValues.slice(0, -1).concat(key)));
+          } else {
+            setInputValues(inputValues.concat(key));
+          }
+          return;
         }
-        return;
+        setInputValues(inputValues.concat(key));
       }
-      setInputValues(inputValues.concat(key));
     }
   };
 
@@ -67,6 +78,10 @@ export const Calculator = () => {
     setExpression("");
   };
 
+  const error = () => {
+    setInputValues("Error!");
+  };
+
   const calculate = () => {
     let expression = "";
     const lastDigit = inputValues[inputValues.length - 1];
@@ -76,143 +91,137 @@ export const Calculator = () => {
       return;
     } else {
       expression = inputValues;
-      result = stringMath(expression);
+      result = stringMath(expression, error);
       setExpression(expression);
       setInputValues(result.toString());
     }
   };
 
   return (
-    <>
+    <Container onKeyDown={firstInputTaken ? handleInput : handleFirstInput}>
       <h1>React Calculator</h1>
-      <CalculatorStyled
-        onKeyDown={firstInputTaken ? handleInput : handleFirstInput}
-      >
-        <ScreenStyled>
+      <CalculatorStyled>
+        <Display>
           <input value={expression} readOnly className="input_queue"></input>
           <input value={inputValues} readOnly></input>
-        </ScreenStyled>
-        <NumPadStyled>
-          <Button
-            text="Clear"
-            className="button_clear highlight"
-            onClick={clearInputs}
-            onKeyPress={""}
-          ></Button>
-          <Button
-            text={<span>&#8701;</span>}
+        </Display>
+        <Numpad>
+          <button className="button_clear highlight" onClick={clearInputs}>
+            Clear
+          </button>
+          <button
             className="button_operator highlight button_backspace"
             onClick={backspace}
-          ></Button>
-          <Button
-            text={"\u00F7"}
+          >
+            &#8592;
+          </button>
+          <button
             name="/"
             className="button_operator highlight"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
           >
-            ÷
-          </Button>
-          <Button
-            text="7"
+            &#247;
+          </button>
+          <button
             name="7"
             className="button_number"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
-          ></Button>
-          <Button
+            tabIndex="-1"
+          >
+            7
+          </button>
+          <button
             name="8"
-            text="8"
             className="button_number"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
-          ></Button>
-          <Button
+          >
+            8
+          </button>
+          <button
             name="9"
-            text="9"
             className="button_number"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
           >
             9
-          </Button>
-          <Button
+          </button>
+          <button
             name="*"
-            text="X"
             className="button_operator highlight"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
-          ></Button>
-          <Button
+          >
+            &#10761;
+          </button>
+          <button
             name="4"
-            text="4"
             className="button_number"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
-          ></Button>
-          <Button
+          >
+            4
+          </button>
+          <button
             name="5"
-            text="5"
             className="button_number"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
-          ></Button>
-          <Button
+          >
+            5
+          </button>
+          <button
             name="6"
-            text="6"
             className="button_number"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
-          ></Button>
-          <Button
+          >
+            6
+          </button>
+          <button
             name="-"
-            text={"\u2212"}
             className="button_operator highlight"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
-          ></Button>
-          <Button
+          >
+            -
+          </button>
+          <button
             name="1"
-            text="1"
             className="button_number"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
-          ></Button>
-          <Button
+          >
+            1
+          </button>
+          <button
             name="2"
-            text="2"
             className="button_number"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
-          ></Button>
-          <Button
+          >
+            2
+          </button>
+          <button
             name="3"
-            text="3"
             className="button_number"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
-          ></Button>
-          <Button
+          >
+            3
+          </button>
+          <button
             name="+"
-            text="+"
             className="button_operator highlight"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
           >
             +
-          </Button>
-          <Button
-            name="8"
-            text="8"
+          </button>
+          <button
+            name="0"
             className="button_number"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
           >
             0
-          </Button>
-          <Button
-            name="."
-            text="."
-            className="button_number"
-            onClick={handleInput}
-          >
+          </button>
+          <button name="." className="button_number" onClick={handleInput}>
             .
-          </Button>
-          <Button
-            text="="
-            className="button_equal highlight"
-            onClick={calculate}
-          >
+          </button>
+          <button className="button_equal highlight" onClick={calculate}>
             =
-          </Button>
-        </NumPadStyled>
-        <p>made by Greg</p>
+          </button>
+        </Numpad>
+        <p>by Gustavo P. Nunes</p>
       </CalculatorStyled>
       <div className="instructions">
         <p>insert numbers by clicking on them, or use your keyboard</p>
@@ -227,6 +236,8 @@ export const Calculator = () => {
           <span>Enter:</span> calculate
         </p>
       </div>
-    </>
+    </Container>
   );
 };
+
+export default Calculator;
