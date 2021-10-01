@@ -3,7 +3,8 @@ import Container from "../Container";
 import CalculatorStyled from "./style";
 import Display from "./Display";
 import Numpad from "./Numpad";
-const stringMath = require("string-math");
+import stringMath from "string-math";
+import { Instructions } from "../Instructions";
 
 const Calculator = () => {
   const operators = ["+", "-", "*", "/", "."];
@@ -13,7 +14,7 @@ const Calculator = () => {
 
   const handleFirstInput = (keyPressed) => {
     const key = keyPressed.target.name || keyPressed.key;
-    if (!isNaN(key) || key === "-") {
+    if (Number(key) || key === "-") {
       setInputValues(key);
       setFirstInputTaken(true);
     }
@@ -26,7 +27,7 @@ const Calculator = () => {
 
   const handleInput = (keyPressed) => {
     let key = "";
-
+    console.log(keyPressed);
     keyPressed.detail === 1
       ? (key = keyPressed.target.name)
       : (key = keyPressed.key);
@@ -36,7 +37,7 @@ const Calculator = () => {
     if (key === "Escape") return clearInputs();
     if (key === "Enter") return calculate();
 
-    if (!isNaN(key) || operators.includes(key)) {
+    if (Number(key) || operators.includes(key)) {
       if (inputValues.length < 12) {
         setInputValues(inputValues);
         const lastDigit = inputValues[inputValues.length - 1];
@@ -110,15 +111,12 @@ const Calculator = () => {
           <button className="button_clear highlight" onClick={clearInputs}>
             Clear
           </button>
-          <button
-            className="button_operator highlight button_backspace"
-            onClick={backspace}
-          >
+          <button className="highlight button_backspace" onClick={backspace}>
             &#8592;
           </button>
           <button
             name="/"
-            className="button_operator highlight"
+            className="highlight"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
           >
             &#247;
@@ -147,7 +145,7 @@ const Calculator = () => {
           </button>
           <button
             name="*"
-            className="button_operator highlight"
+            className="highlight"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
           >
             &#10761;
@@ -175,7 +173,7 @@ const Calculator = () => {
           </button>
           <button
             name="-"
-            className="button_operator highlight"
+            className="highlight"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
           >
             -
@@ -203,7 +201,7 @@ const Calculator = () => {
           </button>
           <button
             name="+"
-            className="button_operator highlight"
+            className="highlight"
             onClick={firstInputTaken ? handleInput : handleFirstInput}
           >
             +
@@ -224,19 +222,7 @@ const Calculator = () => {
         </Numpad>
         <p>by Gustavo P. Nunes</p>
       </CalculatorStyled>
-      <div className="instructions">
-        <p>insert numbers by clicking on them, or use your keyboard</p>
-        <br />
-        <p>
-          <span>Esc: </span> clean display
-        </p>
-        <p>
-          <span>Del / backspace:</span> delete last symbol
-        </p>
-        <p>
-          <span>Enter:</span> calculate
-        </p>
-      </div>
+      <Instructions />
     </Container>
   );
 };
