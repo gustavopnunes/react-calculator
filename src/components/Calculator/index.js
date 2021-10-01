@@ -27,10 +27,10 @@ const Calculator = () => {
 
   const handleInput = (keyPressed) => {
     let key = "";
-    console.log(keyPressed);
-    keyPressed.detail === 1
+    keyPressed.target.name
       ? (key = keyPressed.target.name)
       : (key = keyPressed.key);
+    console.log(key);
 
     if (key === "Backspace") return backspace();
     if (key === "Delete") return backspace();
