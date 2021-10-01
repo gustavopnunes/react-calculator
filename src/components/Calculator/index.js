@@ -13,7 +13,7 @@ const Calculator = () => {
   const [expression, setExpression] = useState("");
 
   const handleFirstInput = (keyPressed) => {
-    const key = keyPressed.target.name || keyPressed.key;
+    const key = keyPressed;
     if (!isNaN(key) || key === "-") {
       setInputValues(key);
       setFirstInputTaken(true);
@@ -26,11 +26,7 @@ const Calculator = () => {
   };
 
   const handleInput = (keyPressed) => {
-    let key = "";
-    keyPressed.target.name
-      ? (key = keyPressed.target.name)
-      : (key = keyPressed.key);
-
+    let key = keyPressed;
     if (key === "Backspace") return backspace();
     if (key === "Delete") return backspace();
     if (key === "Escape") return clearInputs();
@@ -104,7 +100,12 @@ const Calculator = () => {
   };
 
   return (
-    <Container onKeyDown={firstInputTaken ? handleInput : handleFirstInput}>
+    <Container
+      onKeyDown={(e) => {
+        e.preventDefault();
+        firstInputTaken ? handleInput(e.key) : handleFirstInput(e.key);
+      }}
+    >
       <h1>React Calculator</h1>
       <CalculatorStyled>
         <Display expression={expression} inputValues={inputValues} />
@@ -112,109 +113,171 @@ const Calculator = () => {
           <button className="button_clear highlight" onClick={clearInputs}>
             Clear
           </button>
-          <button className="highlight button_backspace" onClick={backspace}>
+          <button
+            className="highlight button_backspace"
+            onClick={() => backspace()}
+          >
             &#8592;
           </button>
           <button
             name="/"
             className="highlight"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             &#247;
           </button>
           <button
             name="7"
             className="button_number"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
-            tabIndex="-1"
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             7
           </button>
           <button
             name="8"
             className="button_number"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             8
           </button>
           <button
             name="9"
             className="button_number"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             9
           </button>
           <button
             name="*"
             className="highlight"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             &#10761;
           </button>
           <button
             name="4"
             className="button_number"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             4
           </button>
           <button
             name="5"
             className="button_number"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             5
           </button>
           <button
             name="6"
             className="button_number"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             6
           </button>
           <button
             name="-"
             className="highlight"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             -
           </button>
           <button
             name="1"
             className="button_number"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             1
           </button>
           <button
             name="2"
             className="button_number"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             2
           </button>
           <button
             name="3"
             className="button_number"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             3
           </button>
           <button
             name="+"
             className="highlight"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             +
           </button>
           <button
             name="0"
             className="button_number"
-            onClick={firstInputTaken ? handleInput : handleFirstInput}
+            onClick={(e) =>
+              firstInputTaken
+                ? handleInput(e.target.name)
+                : handleFirstInput(e.target.name)
+            }
           >
             0
           </button>
-          <button name="." className="button_number" onClick={handleInput}>
+          <button
+            name="."
+            className="button_number"
+            onClick={(e) => handleInput(e.target.name)}
+          >
             .
           </button>
           <button className="button_equal highlight" onClick={calculate}>
@@ -229,3 +292,5 @@ const Calculator = () => {
 };
 
 export default Calculator;
+
+// TODO: fix cursor pointer bug
