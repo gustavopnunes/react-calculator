@@ -14,7 +14,7 @@ const Calculator = () => {
 
   const handleFirstInput = (keyPressed) => {
     const key = keyPressed.target.name || keyPressed.key;
-    if (Number(key) || key === "-") {
+    if (!isNaN(key) || key === "-") {
       setInputValues(key);
       setFirstInputTaken(true);
     }
@@ -30,14 +30,13 @@ const Calculator = () => {
     keyPressed.target.name
       ? (key = keyPressed.target.name)
       : (key = keyPressed.key);
-    console.log(key);
 
     if (key === "Backspace") return backspace();
     if (key === "Delete") return backspace();
     if (key === "Escape") return clearInputs();
     if (key === "Enter") return calculate();
 
-    if (Number(key) || operators.includes(key)) {
+    if (!isNaN(key) || operators.includes(key)) {
       if (inputValues.length < 12) {
         setInputValues(inputValues);
         const lastDigit = inputValues[inputValues.length - 1];
@@ -95,6 +94,11 @@ const Calculator = () => {
       expression = inputValues;
       result = stringMath(expression, error);
       setExpression(expression);
+      result = result.toString();
+      if (result.includes(".")) {
+        result = Number(result);
+        result = result.toFixed(2);
+      }
       setInputValues(result.toString());
     }
   };
@@ -103,10 +107,7 @@ const Calculator = () => {
     <Container onKeyDown={firstInputTaken ? handleInput : handleFirstInput}>
       <h1>React Calculator</h1>
       <CalculatorStyled>
-        <Display>
-          <input value={expression} readOnly className="input_queue"></input>
-          <input value={inputValues} readOnly></input>
-        </Display>
+        <Display expression={expression} inputValues={inputValues} />
         <Numpad>
           <button className="button_clear highlight" onClick={clearInputs}>
             Clear
